@@ -21,9 +21,12 @@ Future improvements to make (Not implemented yet):
 - Replace @Value annotation with Properties class
 - Use Swagger to document API
 - Avoid cross-origin annotation
-- Record metrics
 - Use Lombok annotations to remove boilerplate
 - Add unit tests for MembershipBackendClient
+
+## React section
+I use TDD to implement all the changes.
+I added a text class App.test.tsx to cover the existing functionality and updated the code to implement the task.
 
 # DO NOT FORK!
 **In the interest of fairness for everyone, please DO NOT fork this repo through Github. This is to avoid accidental sharing of the solution. If you are taking the test, please select "Use this template" to create your own repo and get started instead.**
