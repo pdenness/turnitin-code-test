@@ -42,6 +42,7 @@ public class MembershipServiceTest {
         when(membershipBackendClient.fetchMemberships()).thenReturn(CompletableFuture.completedFuture(members));
     }
 
+    //region get all memberships
     @Test
     public void testFetchAllMemberships() throws Exception {
         when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
@@ -77,7 +78,7 @@ public class MembershipServiceTest {
         when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
         UserMembershipList members = membershipService.fetchAllMembershipsWithUsers().get();
 
-        assertTrue(members.memberships().isEmpty());
+        assertThat(members.memberships()).isEmpty();
     }
 
     @Test
@@ -86,7 +87,7 @@ public class MembershipServiceTest {
         when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
         UserMembershipList members = membershipService.fetchAllMembershipsWithUsers().get();
 
-        assertTrue(members.memberships().isEmpty());
+        assertThat(members.memberships()).isEmpty();
     }
 
     @Test
@@ -95,7 +96,7 @@ public class MembershipServiceTest {
         UserList userList = new UserList(List.of(user));
         when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
         UserMembershipList members = membershipService.fetchAllMembershipsWithUsers().get();
-        assertTrue(members.memberships().isEmpty());
+        assertThat(members.memberships()).isEmpty();
     }
 
     @Test
@@ -108,4 +109,79 @@ public class MembershipServiceTest {
         UserMembershipList members = membershipService.fetchAllMembershipsWithUsers().get();
         assertTrue(members.memberships().isEmpty());
     }
+    //endregion
+    //region filter memberships feature
+
+    @Test
+    public void testFiltersUserForName() throws Exception {
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers(userOne.name(), null).get();
+
+        assertThat(members.memberships().size()).isEqualTo(1);
+        assertThat(members.memberships().get(0).user()).isEqualTo(userOne);
+    }
+
+    @Test
+    public void testFiltersUserForNameIgnoreCase() throws Exception {
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers("test ONE", null).get();
+
+        assertThat(members.memberships().size()).isEqualTo(1);
+        assertThat(members.memberships().get(0).user()).isEqualTo(userOne);
+    }
+
+    @Test
+    public void testFiltersUserForNameHandlesNullUserName() throws Exception {
+        userOne = new User("00ad4fc8-e56e-4098-aaf3-1aff93a7bc4c", null, "test1@example.com");
+        userList = new UserList(List.of(userOne, userTwo));
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers("test ONE", null).get();
+
+        assertThat(members.memberships()).isEmpty();
+    }
+
+    @Test
+    public void testFiltersUserForNameHandlesNullNameParameter() throws Exception {
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers(null, null).get();
+
+        assertThat(members.memberships()).isEmpty();
+    }
+
+    @Test
+    public void testFiltersUserForEmail() throws Exception {
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers(null, userOne.email()).get();
+
+        assertThat(members.memberships().size()).isEqualTo(1);
+        assertThat(members.memberships().get(0).user()).isEqualTo(userOne);
+    }
+
+    @Test
+    public void testFiltersUserForEmailIgnoreCase() throws Exception {
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers(null, "TEST1@example.com").get();
+
+        assertThat(members.memberships().size()).isEqualTo(1);
+        assertThat(members.memberships().get(0).user()).isEqualTo(userOne);
+    }
+
+    @Test
+    public void testFiltersUserForEmailHandlesNullEmail() throws Exception {
+        userOne = new User("00ad4fc8-e56e-4098-aaf3-1aff93a7bc4c", "test one", null);
+        userList = new UserList(List.of(userOne, userTwo));
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers(null, "TEST1@example.com").get();
+
+        assertThat(members.memberships()).isEmpty();
+    }
+
+    @Test
+    public void testFiltersUserForNameHandlesBothEmailAndName() throws Exception {
+        when(membershipBackendClient.fetchUsers()).thenReturn(CompletableFuture.completedFuture(userList));
+        UserMembershipList members = membershipService.fetchMembershipsWithUsers("test two", "TEST1@example.com").get();
+
+        assertThat(members.memberships().size()).isEqualTo(2);
+    }
+    //endregion
 }

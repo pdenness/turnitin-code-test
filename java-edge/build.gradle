@@ -30,6 +30,7 @@ dependencies {
 	testImplementation 'junit:junit:4.13.1'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.apache.commons:commons-lang3:3.14.0'
 }
 
 tasks.named('test') {

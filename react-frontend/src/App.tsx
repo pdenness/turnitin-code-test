@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FC, useState } from 'react';
 import './App.css';
 import { Membership } from './Type';
-import { fetchMembers } from './Api';
+import { fetchMembers, fetchMembersByNameOrEmail } from './Api';
 import { Button, Input, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import turnitinLogo from './turnitin-logo.png';
 
@@ -9,14 +9,31 @@ const App: FC<any> = () => {
   const [memberships, setMemberships] = useState<Array<Membership>>([]);
   const [search, setSearch] = useState<string>();
   const [activeMembership, setActiveMembership] = useState<Membership>();
+  const [email, setEmail] = useState<string>('');
+  const [name, setName] = useState<string>('');
 
   const loadMemberships = () => {
     return fetchMembers()
       .then(membershipList => setMemberships(membershipList.memberships))
   }
 
+  const loadMembershipsByEmailOrName = () => {
+    if (name || email) {
+      return fetchMembersByNameOrEmail(name, email)
+        .then(membershipList => setMemberships(membershipList.memberships));
+    }
+    return loadMemberships();
+  }
+
   const updateSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+  }
+
+  const updateEmail = (event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  }
+  const updateName = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
   }
 
   const loadDetailsModal = (membership: Membership) => {
@@ -33,7 +50,10 @@ const App: FC<any> = () => {
         <img src={turnitinLogo} alt='logo' />
         <div className='user-inputs'>
           <Button color='primary' className='fetch-btn' onClick={loadMemberships}>Fetch Memberships</Button>
-          <Input type='text' placeholder='Search' onChange={updateSearch} />
+          <Button color='secondary' className='fetch-btn' onClick={loadMembershipsByEmailOrName}>Fetch by name or email</Button>
+          <Input type='text' placeholder='Search' onChange={updateSearch}/>
+          <Input type='text' placeholder='Email' onChange={updateEmail}/>
+          <Input type='text' placeholder='Name' onChange={updateName}/>
         </div>
         {
           memberships && memberships.length > 0 && (

@@ -1,10 +1,10 @@
 # Submission
 I start by building the project and running all the tests. 
 ## Java edge section
-I use TDD to implement all the changes.
+I use TDD to implement the changes. 
 Furthermore, I added the following improvements:
-1. Only call users endpoint when memberships are found
-2. Handle edge cases:
+1. Only call users endpoint when memberships exist
+2. Handle validation for filtering logic:
    1. Null user ID
    2. Null member ID
    3. Null users list
@@ -12,21 +12,31 @@ Furthermore, I added the following improvements:
    5. User ID not found for membership
 3. Ensured collections for immutable
 4. Implemented immutable objects with Records
-5. Several clean code improvements
+5. Clean code improvements
    1. Separate models to de-couple PHP response
    2. Use required args constructor instead of autowired
+   3. Use properties file to set backendHost
+   4. Remove wildcard imports
+6. Added swagger for documenting API
+7. Bean validation
+8. Logging
+9. I added a feature to allow backend filtering on the name or email address, which enables us to remove logic from the front-end in future.
 
 Future improvements to make (Not implemented yet):
-- Use properties file to set backendHost
-- Replace @Value annotation with Properties class
-- Use Swagger to document API
 - Avoid cross-origin annotation
 - Use Lombok annotations to remove boilerplate
 - Add unit tests for MembershipBackendClient
+- Swagger documentation
 
 ## React section
-I use TDD to implement all the changes.
-I added a text class App.test.tsx to cover the existing functionality and updated the code to implement the task.
+I use TDD to implement the changes.
+I added a test class App.test.tsx to cover the existing functionality and updated the code to implement the task.
+
+I added a feature to support the filtering by name and email in the backend. This included adding 2 textboxes for name and email, plus a button to call the new API endpoint.
+
+Future improvements:
+- Load the API url using env
+- Input validation for name and email button
 
 # DO NOT FORK!
 **In the interest of fairness for everyone, please DO NOT fork this repo through Github. This is to avoid accidental sharing of the solution. If you are taking the test, please select "Use this template" to create your own repo and get started instead.**

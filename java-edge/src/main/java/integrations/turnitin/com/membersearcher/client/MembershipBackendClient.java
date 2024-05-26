@@ -5,7 +5,9 @@ import integrations.turnitin.com.membersearcher.exception.ClientRequestException
 import integrations.turnitin.com.membersearcher.model.MembershipList;
 import integrations.turnitin.com.membersearcher.model.User;
 import integrations.turnitin.com.membersearcher.model.UserList;
-import org.springframework.beans.factory.annotation.Value;
+import integrations.turnitin.com.membersearcher.properties.BackendProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,30 +23,30 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class MembershipBackendClient {
-	@Value("${backend.host:http://localhost:8041}")
-	private String backendHost;
+	private final Logger logger = LoggerFactory.getLogger(MembershipBackendClient.class);
+	private final BackendProperties backendProperties;
 	private final HttpClient httpClient;
-
 	private final ObjectMapper objectMapper;
 
-	public MembershipBackendClient(ObjectMapper objectMapper) {
+	public MembershipBackendClient(ObjectMapper objectMapper, BackendProperties backendProperties) {
 		this.httpClient = HttpClient.newBuilder()
 				.connectTimeout(Duration.ofSeconds(30))
 				.followRedirects(HttpClient.Redirect.NORMAL)
 				.build();
 		this.objectMapper = objectMapper;
+		this.backendProperties = backendProperties;
 	}
 
 	public CompletableFuture<MembershipList> fetchMemberships() {
-		return makeRequest("GET", backendHost + "/api.php/members", null, MembershipList.class);
+		return makeRequest("GET", backendProperties.getHost() + "/api.php/members", null, MembershipList.class);
 	}
 
 	public CompletableFuture<User> fetchUser(String userId) {
-		return makeRequest("GET", backendHost + "/api.php/users/" + userId, null, User.class);
+		return makeRequest("GET", backendProperties.getHost() + "/api.php/users/" + userId, null, User.class);
 	}
 
 	public CompletableFuture<UserList> fetchUsers() {
-		return makeRequest("GET", backendHost + "/api.php/users", null, UserList.class);
+		return makeRequest("GET", backendProperties.getHost() + "/api.php/users", null, UserList.class);
 	}
 
 	private <T> CompletableFuture<T> makeRequest(String method, String url, Object body, Class<T> responseType) {
@@ -59,7 +61,9 @@ public class MembershipBackendClient {
 			requestBuilder.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 			try {
 				bodyString = objectMapper.writeValueAsString(body);
-			} catch (IOException exception) {}
+			} catch (IOException exception) {
+				logger.error("Encountered IOException writing body {}", body, exception);
+			}
 		}
 		requestBuilder.method(method, HttpRequest.BodyPublishers.ofString(bodyString));
 
