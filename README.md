@@ -10,6 +10,8 @@ Furthermore, I added the following improvements:
    3. Null users list
    4. Null members list
    5. User ID not found for membership
+   6. Null user name for backend filtering
+   7. Null user email for backend filtering 
 3. Ensured collections for immutable
 4. Implemented immutable objects with Records
 5. Clean code improvements
@@ -17,10 +19,8 @@ Furthermore, I added the following improvements:
    2. Use required args constructor instead of autowired
    3. Use properties file to set backendHost
    4. Remove wildcard imports
-6. Added swagger for documenting API
-7. Bean validation
-8. Logging
-9. I added a feature to allow backend filtering on the name or email address, which enables us to remove logic from the front-end in future.
+6. Logging
+7. I added a feature to allow backend filtering on the name or email address, which enables us to remove logic from the front-end in future.
 
 Future improvements to make (Not implemented yet):
 - Avoid cross-origin annotation
