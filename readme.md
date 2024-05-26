@@ -1,3 +1,30 @@
+# Submission
+I start by building the project and running all the tests. 
+## Java edge section
+I use TDD to implement all the changes.
+Furthermore, I added the following improvements:
+1. Only call users endpoint when memberships are found
+2. Handle edge cases:
+   1. Null user ID
+   2. Null member ID
+   3. Null users list
+   4. Null members list
+   5. User ID not found for membership
+3. Ensured collections for immutable
+4. Implemented immutable objects with Records
+5. Several clean code improvements
+   1. Separate models to de-couple PHP response
+   2. Use required args constructor instead of autowired
+
+Future improvements to make (Not implemented yet):
+- Use properties file to set backendHost
+- Replace @Value annotation with Properties class
+- Use Swagger to document API
+- Avoid cross-origin annotation
+- Record metrics
+- Use Lombok annotations to remove boilerplate
+- Add unit tests for MembershipBackendClient
+
 # DO NOT FORK!
 **In the interest of fairness for everyone, please DO NOT fork this repo through Github. This is to avoid accidental sharing of the solution. If you are taking the test, please select "Use this template" to create your own repo and get started instead.**
 

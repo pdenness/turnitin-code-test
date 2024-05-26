@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import integrations.turnitin.com.membersearcher.controller.ApiController;
-import integrations.turnitin.com.membersearcher.model.Membership;
-import integrations.turnitin.com.membersearcher.model.MembershipList;
-import integrations.turnitin.com.membersearcher.model.User;
+import integrations.turnitin.com.membersearcher.model.*;
 import integrations.turnitin.com.membersearcher.service.MembershipService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -37,26 +35,13 @@ public class ApiControllerTest {
 	private MembershipService membershipService;
 
 	@Test
-	public void TestMembershipsEndpointReturnsMemberships() throws Exception {
-		MembershipList members = new MembershipList()
-				.setMemberships(List.of(
-						new Membership()
-								.setId("a")
-								.setRole("instructor")
-								.setUserId("1")
-								.setUser(new User()
-												 .setId("1")
-												 .setName("test one")
-												 .setEmail("test1@example.com")),
-						new Membership()
-								.setId("b")
-								.setRole("student")
-								.setUserId("2")
-								.setUser(new User()
-												 .setId("2")
-												 .setName("test two")
-												 .setEmail("test2@example.com"))
-				));
+	public void testMembershipsEndpointReturnsMemberships() throws Exception {
+		UserMembershipList members = new UserMembershipList(List.of(
+				new UserMembership("a",  "00ad4fc8-e56e-4098-aaf3-1aff93a7bc4c", "instructor",
+						new User("00ad4fc8-e56e-4098-aaf3-1aff93a7bc4c","test one","test1@example.com")),
+				new UserMembership("b", "f57975d2-e6ae-4f4a-aada-ee6cdcede0d1", "student",
+						new User("f57975d2-e6ae-4f4a-aada-ee6cdcede0d1", "test two", "test2@example.com"))
+		));
 		when(membershipService.fetchAllMembershipsWithUsers()).thenReturn(CompletableFuture.completedFuture(members));
 
 		final MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/course/members");
@@ -65,6 +50,11 @@ public class ApiControllerTest {
 		mvc.perform(asyncDispatch(result))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.memberships").isNotEmpty())
-				.andExpect(jsonPath("$.memberships[0].user.name").value("test one"));
+				.andExpect(jsonPath("$.memberships[0].user.name").value("test one"))
+				.andExpect(jsonPath("$.memberships[0].user.email").value("test1@example.com"))
+				.andExpect(jsonPath("$.memberships[0].user.id").value("00ad4fc8-e56e-4098-aaf3-1aff93a7bc4c"))
+				.andExpect(jsonPath("$.memberships[0].id").value("a"))
+				.andExpect(jsonPath("$.memberships[0].userId").value("00ad4fc8-e56e-4098-aaf3-1aff93a7bc4c"))
+				.andExpect(jsonPath("$.memberships[0].role").value("instructor"));
 	}
 }

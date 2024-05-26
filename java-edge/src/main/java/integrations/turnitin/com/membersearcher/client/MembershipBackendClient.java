@@ -1,5 +1,16 @@
 package integrations.turnitin.com.membersearcher.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import integrations.turnitin.com.membersearcher.exception.ClientRequestException;
+import integrations.turnitin.com.membersearcher.model.MembershipList;
+import integrations.turnitin.com.membersearcher.model.User;
+import integrations.turnitin.com.membersearcher.model.UserList;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -7,19 +18,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import integrations.turnitin.com.membersearcher.exception.ClientRequestException;
-import integrations.turnitin.com.membersearcher.model.MembershipList;
-import integrations.turnitin.com.membersearcher.model.UserList;
-import integrations.turnitin.com.membersearcher.model.User;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
 
 @Service
 public class MembershipBackendClient {
@@ -29,7 +27,6 @@ public class MembershipBackendClient {
 
 	private final ObjectMapper objectMapper;
 
-	@Autowired
 	public MembershipBackendClient(ObjectMapper objectMapper) {
 		this.httpClient = HttpClient.newBuilder()
 				.connectTimeout(Duration.ofSeconds(30))
